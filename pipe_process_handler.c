@@ -9,8 +9,9 @@
 #include <sys/un.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/wait.h>
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 256
 #define SOCKET_PATH "/tmp/pid_input_socket"
 
 void process_exit_callback(pid_t pid) {
@@ -105,6 +106,7 @@ int main() {
                                 struct epoll_event new_ev;
                                 new_ev.events = EPOLLIN;
                                 new_ev.data.fd = pidfd;
+
                                 if (epoll_ctl(efd, EPOLL_CTL_ADD, pidfd, &new_ev) == -1) {
                                     perror("epoll_ctl add pidfd");
                                     close(pidfd);
